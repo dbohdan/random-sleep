@@ -7,9 +7,10 @@
 set -eu
 
 me=$(basename "$0")
+version=1.0.0
 
 usage() {
-    printf 'usage: %s [-v|--verbose] NUMBER[SUFFIX]\n' "$me"
+    printf 'Usage: %s [-h] [-V] [-v] NUMBER[SUFFIX]\n' "$me"
 }
 
 help() {
@@ -17,10 +18,21 @@ help() {
 
 Sleep a random whole number of seconds between 0 and NUMBER seconds, minutes, or hours (inclusive).
 
-NUMBER must be a non-negative integer.
-The optional SUFFIX must be "s", "m", or "h" when present (case-insensitive).
+Arguments:
+  NUMBER[SUFFIX]
+          The maximum sleep duration. NUMBER must be a non-negative integer. The optional SUFFIX must be 's', 'm', or 'h' when present. The suffix is case-insensitive.
 
-Pass the option "-v"/"--verbose" or set the environment variable "RANDOM_SLEEP_DEBUG" to print the generated number of seconds to standard error.
+Options:
+  -h, --help
+          Print this help message and exit.
+
+  -V, --version
+          Print the version number and exit.
+
+  -v, --verbose
+          Print the generated number of seconds to standard error before sleeping.
+
+Setting the environment variable 'RANDOM_SLEEP_DEBUG' has the same effect as the option '-v'/'--verbose'.
 EOF
 }
 
@@ -42,7 +54,7 @@ random_int() {
     _rand=$(dd if=/dev/urandom bs=4 count=1 2>/dev/null |
         od -A n -t u4 |
         sed 's|^ *0*||;s| *$||')
-    printf '%d\n' "$((_min + (_rand % _range)))"
+    printf '%d\n' $((_min + (_rand % _range)))
 }
 
 random_wait() {
@@ -57,7 +69,8 @@ random_wait() {
 }
 
 main() {
-    # Process a help option in any position.
+    # Process a help or version option in any position.
+    # Help takes priority.
     for _arg in "$@"; do
         case "$_arg" in
         -\? | -h | --help | -help | help)
@@ -68,7 +81,19 @@ main() {
         esac
     done
 
+    for _arg in "$@"; do
+        case "$_arg" in
+        -V | --version)
+            printf '%s\n' "$version"
+            return
+            ;;
+        esac
+    done
+
+    # Process our one "regular" option.
+    # Catch unrecognized options.
     verbose=0
+
     case "${1:-}" in
     -v | --verbose)
         verbose=1
@@ -83,10 +108,12 @@ main() {
         return 2
         ;;
     esac
+
     if [ "${RANDOM_SLEEP_DEBUG+set}" = set ]; then
         verbose=2
     fi
 
+    # Check the positional argument count.
     if [ $# -eq 0 ]; then
         usage >&2
         return 2
@@ -98,6 +125,7 @@ main() {
         return 2
     fi
 
+    # Parse the positional argument.
     _arg="$1"
     if ! expr "$_arg" : '[0-9][0-9]*[HMShms]\{0,1\}$' >/dev/null; then
         printf 'invalid argument: "%s"\n' "$_arg" >&2
