@@ -56,4 +56,4 @@ test_args ok 0
 test_args ok 0h
 RANDOM_SLEEP_DEBUG='' test_args ok 2
 
-return "$status"
+exit "$status"
