@@ -4,6 +4,7 @@
 # Copyright (c) 2024 D. Bohdan.
 # License: MIT.
 # See https://github.com/dbohdan/random-sleep
+
 set -eu
 
 me=$(basename "$0")
@@ -90,7 +91,7 @@ main() {
         esac
     done
 
-    # Process our one "regular" option.
+    # Process our one regular option.
     # Catch unrecognized options.
     verbose=0
 
