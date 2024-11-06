@@ -8,7 +8,7 @@
 set -eu
 
 me=$(basename "$0")
-version=1.0.0
+version=1.0.1
 
 usage() {
     printf 'Usage: %s [-h] [-V] [-v] NUMBER[SUFFIX]\n' "$me"
@@ -49,11 +49,10 @@ random_int() {
         return 1
     fi
 
-    # Use dd(1) to read four bytes, od(1) to convert them to decimal.
+    # Use od(1) to read four random bytes and convert them to decimal.
     # Remove whitespace and leading zeroes,
     # which some systems' shells reject in an arithmetic expression.
-    _rand=$(dd if=/dev/urandom bs=4 count=1 2>/dev/null |
-        od -A n -t u4 |
+    _rand=$(od -A n -N 4 -t u4 </dev/urandom |
         sed 's|^ *0*||;s| *$||')
     printf '%d\n' $((_min + (_rand % _range)))
 }
