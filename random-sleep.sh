@@ -25,13 +25,13 @@ Arguments:
 
 Options:
   -h, --help
-          Print this help message and exit.
+          Print this help message and exit
 
   -V, --version
-          Print the version number and exit.
+          Print the version number and exit
 
   -v, --verbose
-          Print the generated number of seconds to standard error before sleeping.
+          Print the generated number of seconds to standard error before sleeping
 
 Setting the environment variable 'RANDOM_SLEEP_DEBUG' has the same effect as the option '-v'/'--verbose'.
 EOF
