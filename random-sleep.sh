@@ -8,14 +8,31 @@
 set -eu
 
 me=$(basename "$0")
-version=1.0.1
+version=1.1.0
+width=80
+
+if stty -a >/dev/null; then
+    width=$(stty -a | awk '
+        BEGIN {
+            RS = ";"
+        }
+
+        /columns/ {
+            for (i = 1; i <= NF; i++) {
+                if ($i ~ /^[0-9]/) {
+                    print $i
+                }
+            }
+        }
+    ')
+fi
 
 usage() {
-    printf 'Usage: %s [-h] [-V] [-v] NUMBER[SUFFIX]\n' "$me"
+    printf 'Usage: %s [-h] [-V] [-v] NUMBER[SUFFIX]\n' "$me" | fold -s -w "$width"
 }
 
 help() {
-    cat <<EOF
+    fold -s -w "$width" <<EOF
 
 Sleep a random whole number of seconds between 0 and NUMBER seconds, minutes, or hours (inclusive).
 
