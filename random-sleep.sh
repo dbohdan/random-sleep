@@ -8,10 +8,10 @@
 set -eu
 
 me=$(basename "$0")
-version=1.1.0
+version=1.1.1
 width=80
 
-if stty -a >/dev/null; then
+if stty -a >/dev/null 2>&1; then
     # Parse both `columns 123;` (BusyBox, GNU)
     # and `123 columns;` (Free/Net/OpenBSD, macOS).
     width=$(stty -a | awk '
